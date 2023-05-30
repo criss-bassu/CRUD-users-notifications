@@ -1,0 +1,32 @@
+body{
+  margin-top:20px;
+  background:#f8f8f8
+}
+.required-field {
+  color: red;
+  font-weight: bold;
+}
+
+.editar {
+  background-color: #ffbf4e;
+  border-color: black;
+  color: rgb(63, 62, 62);
+}
+
+.borrar {
+  background-color: rgba(248, 14, 14, 0.815);
+  border-color: black;
+  color: rgb(63, 62, 62);
+}
+
+
+.ver {
+  background-color: rgba(0, 0, 255, 0.900);
+}
+
+
+.logo {
+  padding-left: 1em;
+  font-weight: bolder;
+  color: #f8f8f8;
+}

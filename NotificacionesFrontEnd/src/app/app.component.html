@@ -1,0 +1,209 @@
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<nav class="navbar navbar-light bg-primary">
+  <a class="navbar-brand logo" href="#">CloudPath</a>
+</nav>
+<div class="container">
+  <div class="row flex-lg-nowrap">
+
+    <div class="col"> <!-- TODO: COLOCAR AQUI EL SIMBOLO DE LA UMA -->
+      <div class="e-tabs mb-3 px-3">
+        <p></p>
+        <ul class="nav nav-tabs">
+          <li class="nav-item"><a class="nav-link active">Gestión de notificaciones</a></li>
+        </ul>
+      </div>
+
+      <div class="row flex-lg-nowrap">
+        <div class="col mb-3">
+          <div class="e-panel card">
+            <div class="card-body">
+              <div class="e-table">
+                <div class="table-responsive table-lg mt-3">
+                  <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                      <th class="max-width">Id</th>
+                      <th class="sortable">Asunto</th>
+                      <th class="sortable">Cuerpo</th>
+                      <th class="sortable">Email Destino</th>
+                      <th class="sortable">Telefono Destino</th>
+                      <th class="sortable">Programacion Envio</th>
+                      <th class="sortable">Medios</th>
+                      <th class="sortable">Tipo Notificacion</th>
+                      <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let notif of notificaciones">
+                      <td class="text-nowrap align-middle scrollable-cell">{{ notif?.id}}</td>
+                      <td class="text-nowrap align-middle scrollable-cell">{{ notif?.asunto}}</td>
+                      <td class="text-nowrap align-middle scrollable-cell">{{ notif?.cuerpo}}</td>
+                      <td class="text-nowrap align-middle scrollable-cell">{{ notif?.emailDestino}}</td>
+                      <td class="text-nowrap align-middle scrollable-cell">{{ notif?.telefonoDestino}}</td>
+                      <td class="text-nowrap align-middle scrollable-cell">{{ notif?.programacionEnvio}}</td>
+                      <td class="text-nowrap align-middle scrollable-cell">{{ getMedio(notif) }}</td>
+                      <td class="text-nowrap align-middle scrollable-cell">{{ notif?.tipoNotificacion }}</td>
+                      <td class="text-center align-middle">
+                        <div class="btn-group align-top">
+                          <button class="btn btn-sm btn-outline-secondary badge editar" type="button" data-toggle="modal" data-target="#add-notificacion-form" (click)="onUpdateNotificacion(notif)">Editar</button>
+                          <button class="btn btn-sm btn-outline-secondary badge borrar" type="button" (click)="onDeleteNotificacion(notif.id)"><i class="fa fa-trash"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-3 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="text-center px-xl-3">
+                <button class="btn btn-success btn-block" type="button" data-toggle="modal" data-target="#add-notificacion-form">Nueva notificacion</button>
+              </div>
+              <hr class="my-3">
+              <div class="form-group">
+                <div class="text-center px-xl-3">
+                  <form #abortForm (ngSubmit)="onAbortarNotificacion()" >
+                    <label>Selecciona para abortar</label>
+                    <select class="form-select" name="tipoNotificacion" id="tipoNotificacion" [(ngModel)]="tipoSeleccionado" >
+                      <option *ngFor="let tipo of tipoNotificaciones" [value]="">{{ tipo?.valueOf() }}</option>
+                    </select>
+                    <button class="btn btn-primary px-xl-3 mt-3">Abortar</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Form Modal -->
+      <div class="modal fade" role="dialog" tabindex="-1" id="add-notificacion-form" #addnotificacionform>
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" *ngIf="editingNotifId == null">Crear notificacion</h5>
+              <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="py-1">
+                <form #addForm="ngForm" autocomplete="off" class="form" novalidate="" (ngSubmit)="onAddOrEditNotificacion(addForm)">
+                  <div class="row">
+                    <div class="col">
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <label><b>Asunto</b></label>
+                            <input class="form-control" type="text" name="asunto" placeholder="asunto" [(ngModel)]="newNotificacion.asunto">
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-group">
+                            <label><b>Cuerpo</b><span class="required-field">*</span></label>
+                            <textarea class="form-control" name="cuerpo" placeholder="cuerpo" [(ngModel)]="newNotificacion.cuerpo" required></textarea>
+                            <!--<input class="form-control" type="text" maxlength="255" size="50" name="cuerpo" placeholder="cuerpo" [(ngModel)]="newNotificacion.cuerpo"required>
+                              -->
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <label><b>Email Destino</b></label>
+                            <input class="form-control" type="text" name="emaildestino" placeholder="user@example.com" [(ngModel)]="newNotificacion.emailDestino" >
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-group">
+                            <label><b>Teléfono Destino</b></label>
+                            <input class="form-control" type="text" name="telephonedestino" placeholder="606123456" [(ngModel)]="newNotificacion.telefonoDestino">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 col-sm-6 mb-3">
+                      <div class="mb-2"><b>Programacion envio</b></div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <input class="form-control" type="date" name="programacionenvio" placeholder="dd-mm-yyyy" [(ngModel)]="newNotificacion.programacionEnvio">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 mb-3">
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-5 offset-sm-1 mb-3">
+                      <div class="mb-2"><b>Medios</b><span class="required-field">*</span></div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="custom-controls-stacked px-2">
+                            <div class="custom-control custom-checkbox px-2">
+                              <input type="checkbox" class="custom-control-input" id="notifications-blog" (change)="agregarMedio(Medio.SMS)" [checked]="newNotificacion.medios.includes(Medio.SMS)" name="SMS">
+                              <label class="custom-control-label" for="notifications-blog">SMS</label>
+                            </div>
+                            <div class="custom-control custom-checkbox px-2">
+                              <input type="checkbox" class="custom-control-input" id="notifications-news" (change)="agregarMedio(Medio.EMAIL)" name="EMAIL">
+                              <label class="custom-control-label" for="notifications-news">EMAIL</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-5 offset-sm-1 mb-3">
+                      <div class="mb-2"><b>Tipo de Notificación</b><span class="required-field">*</span></div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="custom-controls-stacked px-2">
+                            <div class="custom-control custom-checkbox">
+                              <input type="radio" class="custom-control-input" id="anuncio-nota-estudiante" name="tipoNotificacion" value="anuncioNotaEstudiante" (change)="agregarTipo(TipoNotificacion.ANUNCIO_NOTA_ESTUDIANTE)">
+                              <label class="custom-control-label" for="anuncio-nota-estudiante">Anuncio de nota para estudiante</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                              <input type="radio" class="custom-control-input" id="anuncio-aula-estudiante" name="tipoNotificacion" value="anuncioAulaEstudiante" (change)="agregarTipo(TipoNotificacion.ANUNCIO_AULA_ESTUDIANTE)">
+                              <label class="custom-control-label" for="anuncio-aula-estudiante">Anuncio de aula para estudiante</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                              <input type="radio" class="custom-control-input" id="anuncio-aula-vigilante" name="tipoNotificacion" value="anuncioAulaVigilante" (change)="agregarTipo(TipoNotificacion.ANUNCIO_AULA_VIGILANTE)">
+                              <label class="custom-control-label" for="anuncio-aula-vigilante">Anuncio de aula para vigilante</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                              <input type="radio" class="custom-control-input" id="password-reset" name="tipoNotificacion" value="passwordReset" (change)="agregarTipo(TipoNotificacion.PASSWORD_RESET)">
+                              <label class="custom-control-label" for="password-reset">Reset de contraseña</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="row">
+                    <div class="col d-flex justify-content-end">
+                      <button class="btn btn-primary" type="submit">Guardar</button>
+                    </div>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
